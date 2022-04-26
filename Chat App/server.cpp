@@ -53,17 +53,30 @@ int main(int argc, char const* argv[]) {
         error("accept()");
     }
 
-    while (true)
-    {
+    while (true) {
         bzero(buffer, sizeof(buffer));
 
         ret = read(new_sock_fd, buffer, sizeof(buffer));
         if (ret < 0) {
             error("read()");
         }
-    }
-    
+        fprintf(stdout, "Client : %s\n", buffer);
 
+        fprintf(stdout, "Server : ");
+        bzero(buffer, sizeof(buffer));
+        fgets(buffer, sizeof(buffer), stdin);
+        ret = write(new_sock_fd, buffer, sizeof(buffer));
+        if (ret < 0) {
+            error("write()");
+        }
+
+        if (0 == strncmp("Bye", buffer, strlen("Bye"))) {
+            break;
+        }
+    }
+
+    close(new_sock_fd);
+    close(sock_fd);
 
     return 0;
 }
